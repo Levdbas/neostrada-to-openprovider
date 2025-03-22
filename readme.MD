@@ -3,11 +3,13 @@
 Migrating DNS records can be a tedious task, especially when you have a large number of domains. This script automates the process of preparing the DNS zone data at OpenProvider by extracting the data from Neostrada.
 This way, you only have to double-check the DNS zone before manually transferring the domains to OpenProvider.
 
+> [!CAUTION]
+> This script is provided as-is and should be used with caution. Make sure to be mindful of the API access and the data you are working with. Always double-check the DNS zone data before transferring the domains to OpenProvider.
+
 ## Features
 
-- Extract domain data from Neostrada.
-- Format and prepare data for OpenProvider.
-- Automate the migration process.
+- Bulk export all active domains from Neostrada to a JSON file.
+- Bulk export the DNS zone data and import it to OpenProvider.
 
 ## Prerequisites
 
@@ -49,6 +51,8 @@ npm install
 4. Now run `node index.js` to loop through the domains in the `neostrada-domains.json` file and start the migration process.
 
 5. Inside the `output` folder, you will find a folder for each domain with the DNS zone data in a `zone.txt` file. You can use this data to manually check the DNS records when they are transferred to OpenProvider.
+
+6. Manually transfer the domains to OpenProviders. Since the DNS zone data is already prepared, you can just start the transfer process and you are good to go.
 
 ## Contributing
 
