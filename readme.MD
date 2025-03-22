@@ -51,7 +51,7 @@ npm install
 
 4. Now run `node index.js` to loop through the domains in the `neostrada-domains.json` file and start the migration process.
 
-5. Inside the `output` folder, you will find a folder for each domain with the DNS zone data in a `zone.txt` file. You can use this data to manually check the DNS records when they are transferred to OpenProvider.
+5. Inside the `output` folder, you will find a json file for each domain with the DNS zone data. Use this data to manually check the imported DNS zone data at OpenProvider.
 
 6. Manually transfer the domains to OpenProviders. Since the DNS zone data is already prepared, you can just start the transfer process and you are good to go.
 
