@@ -1,0 +1,12 @@
+{
+  "domains": [
+    {
+      "domain": "example.com",
+      "dns_id": "123456"
+    },
+    {
+      "domain": "example.net",
+      "dns_id": "654321"
+    }
+  ]
+}
