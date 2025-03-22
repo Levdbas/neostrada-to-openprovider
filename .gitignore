@@ -1,3 +1,4 @@
 .env
 neostrada-domains.json
 node_modules
+/output/*.json
