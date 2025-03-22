@@ -13,6 +13,7 @@ This way, you only have to double-check the DNS zone before manually transferrin
 
 ## Prerequisites
 
+- Copy the `.env.example` file to `.env`.
 - API access to Neostrada (Bearer token obtained via your Neostrada account).
    - Add the token as the `NEOSTRADA_API_KEY` in the `.env` file.
 - API access to OpenProvider
