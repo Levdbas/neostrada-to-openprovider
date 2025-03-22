@@ -4,7 +4,7 @@ Migrating DNS records can be a tedious task, especially when you have a large nu
 This way, you only have to double-check the DNS zone before manually transferring the domains to OpenProvider.
 
 > [!CAUTION]
-> This script is provided as-is and should be used with caution. Make sure to be mindful of the API access and the data you are working with. Always double-check the DNS zone data before transferring the domains to OpenProvider.
+> This script is provided as-is and should be used with caution. Make sure to be mindful of the API access and the data you are working with. Always double-check the DNS zone data before transferring the domains to OpenProvider. It is your responsibility to ensure the data is correct and the migration is successful. I am not responsible for any data loss or incorrect DNS zones.
 
 ## Features
 
