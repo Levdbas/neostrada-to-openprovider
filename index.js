@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const fs = require("fs");
 const axios = require("axios");
 
@@ -11,7 +12,13 @@ const JSON_FILE = process.env.JSON_FILE;
 const NEOSTRADA_API_URL = "https://api.neostrada.com/api/dns";
 const OPENPROVIDER_API_URL = "https://api.openprovider.eu/v1beta/dns/zones";
 
-// Laad domeinen uit JSON-bestand
+
+/**
+ * Loads a list of domains from a JSON file.
+ *
+ * @returns {Array} An array of domain objects if the JSON file is successfully read and parsed,
+ *                  or an empty array if an error occurs.
+ */
 function loadDomains() {
    try {
       const data = fs.readFileSync(JSON_FILE, "utf8");
@@ -22,7 +29,15 @@ function loadDomains() {
    }
 }
 
-// Haal DNS-records op van Neostrada
+/**
+ * Fetches DNS records for a given DNS ID from the Neostrada API.
+ *
+ * @async
+ * @param {string} dnsId - The ID of the DNS record to fetch.
+ * @returns {Promise<Object[]>} A promise that resolves to an array of DNS records.
+ *                              Returns an empty array if an error occurs or no records are found.
+ * @throws {Error} Logs an error message if the API request fails.
+ */
 async function getDnsRecords(dnsId) {
    try {
       const response = await axios.get(`${NEOSTRADA_API_URL}/${dnsId}`, {
@@ -40,7 +55,12 @@ async function getDnsRecords(dnsId) {
    return [];
 }
 
-// Filtert SOA & NS records eruit
+/**
+ * Filter out records that are not needed
+ * 
+ * @param {*} records The array  of records to be filtered 
+ * @returns  The filtered array of records
+ */
 function filterRecords(records) {
    records = records.filter((record) => !["SOA", "NS"].includes(record.type));
 
@@ -48,9 +68,7 @@ function filterRecords(records) {
    records = records.filter(record => record.hasOwnProperty('content'));
 
    // if record name value contains localhost, remove the record
-   records = records.filter(record => !record.name.includes
-      ('localhost'));
-
+   records = records.filter(record => !record.name.includes('localhost'));
 
    // if record type is CNAME and name contains 'email.mg', remove the record
    records = records.filter(record => !(record.type === 'CNAME' && record.name.includes('email.mg')));
@@ -59,7 +77,9 @@ function filterRecords(records) {
 }
 
 //  a function that loops through the recods and remove id and domainID from the record
-function removeIdAndDomainId(records) {
+function sanitizeDnsRecords(records, domain) {
+
+   // loop through records, remove id and domainId and change the key "value" to "content"
    records = records.map(record => {
       delete record.id;
       delete record.domainId;
@@ -77,13 +97,32 @@ function removeIdAndDomainId(records) {
       }
 
       return record
+   });
+
+   // If the value of the record is exactly the domain, make the name empty, so we just add the record on the root domain.
+   records = records.map(record => {
+      if (record.name === domain) {
+         record.name = '';
+      }
+
+      return record;
    }
    );
 
    return records;
 }
 
-// Maak DNS-zone aan bij Openprovider
+
+/**
+ * Creates a DNS zone in Openprovider for the specified domain and records.
+ *
+ * @async
+ * @function createOpenproviderZone
+ * @param {string} domain - The domain name for which the DNS zone will be created (e.g., "example.com").
+ * @param {Array<Object>} records - An array of DNS record objects to be added to the zone.
+ * @throws {Error} Throws an error if the API request fails.
+ * @returns {Promise<void>} A promise that resolves when the DNS zone is successfully created.
+ */
 async function createOpenproviderZone(domain, records) {
 
    // get the extension of the domain
@@ -119,11 +158,14 @@ async function createOpenproviderZone(domain, records) {
    }
 }
 
-
-
-
-
-// Hoofdscript
+/**
+ * Migrate DNS records from Neostrada to Openprovider
+ * 
+ * This function loads the domains from a JSON file and then loops through each domain to get the DNS records from Neostrada.
+ * The records are then filtered and sanitized before being saved to a JSON file and migrated to Openprovider.
+ * 
+ * @returns 
+ */
 async function migrateDns() {
    const domains = loadDomains();
    if (domains.length === 0) {
@@ -136,7 +178,7 @@ async function migrateDns() {
 
       const records = await getDnsRecords(dnsId);
       let filteredRecords = filterRecords(records);
-      filteredRecords = removeIdAndDomainId(filteredRecords);
+      filteredRecords = sanitizeDnsRecords(filteredRecords, domain);
 
 
       if (filteredRecords.length === 0) {
@@ -148,7 +190,7 @@ async function migrateDns() {
          (`./output/${domain}.json`, JSON.stringify(filteredRecords, null, 2), 'utf8');
       console.log(`✅ ${domain}.json is aangemaakt`);
 
-      console.log(`📌 Migreren van ${filteredRecords.length} DNS-records naar Openprovider voor ${domain}...`);
+      // console.log(`📌 Migreren van ${filteredRecords.length} DNS-records naar Openprovider voor ${domain}...`);
       await createOpenproviderZone(domain, filteredRecords);
    }
 }
