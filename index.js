@@ -177,23 +177,32 @@ async function migrateDns() {
 
    for (const { domain, dns_id: dnsId } of domains) {
       console.log(`➡️ Ophalen van DNS-records voor ${domain} (ID: ${dnsId})...`);
+      let records = false;
 
-      const records = await getDnsRecords(dnsId);
-      let filteredRecords = filterRecords(records);
-      filteredRecords = sanitizeDnsRecords(filteredRecords, domain);
+      // if /output/the-domain.json already exists, get the records from the file
+      if (fs.existsSync(`./output/${domain}.json`)) {
+         const data = fs.readFileSync
+            (`./output/${domain}.json`, 'utf8');
+         records = JSON.parse(data);
+         console.log(`✅ ${domain}.json is gevonden en geladen`);
+      } else {
+         records = await getDnsRecords(dnsId);
+         records = filterRecords(records);
+         records = sanitizeDnsRecords(records, domain);
+      }
 
-
-      if (filteredRecords.length === 0) {
+      if (records.length === 0) {
          console.log(`⚠️ Geen bruikbare DNS-records voor ${domain}, wordt overgeslagen.`);
          continue;
       }
 
       fs.writeFileSync
-         (`./output/${domain}.json`, JSON.stringify(filteredRecords, null, 2), 'utf8');
+         (`./output/${domain}.json`, JSON.stringify(records, null, 2), 'utf8');
       console.log(`✅ ${domain}.json is aangemaakt`);
 
-      console.log(`📌 Migreren van ${filteredRecords.length} DNS-records naar Openprovider voor ${domain}...`);
-      await createOpenproviderZone(domain, filteredRecords);
+      console.log(`📌 Migreren van ${records.length} DNS-records naar Openprovider voor ${domain}...`);
+      await createOpenproviderZone(domain, records);
+      console.log();
    }
 }
 
