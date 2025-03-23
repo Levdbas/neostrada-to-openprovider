@@ -138,7 +138,6 @@ async function createOpenproviderZone(domain, records) {
                "extension": extension,
                "name": name,
             },
-            "is_spamexperts_enabled": "off",
             "provider": "openprovider",
             "records": records,
             "secured": true,
@@ -151,10 +150,13 @@ async function createOpenproviderZone(domain, records) {
       if (response.data.data.success) {
          console.log(`✅ Succes: DNS-zone aangemaakt voor ${domain}`);
       } else {
-         console.error(`❌ Fout bij aanmaken DNS-zone voor ${domain}: ${response.data.data.desc}`);
+         console.error(`❌ Fout bij aanmaken DNS-zone voor ${domain}: ${response.data.desc}`);
       }
    } catch (error) {
-      console.error("❌ API-fout bij aanmaken DNS-zone:", error.message);
+
+      console.error(`❌ API-fout bij aanmaken DNS-zone voor ${domain}`);
+      console.error(`Error code: ${error.response.data.code}`)
+      console.error(`Beschrijving: ${error.response.data.desc}`)
    }
 }
 
@@ -190,7 +192,7 @@ async function migrateDns() {
          (`./output/${domain}.json`, JSON.stringify(filteredRecords, null, 2), 'utf8');
       console.log(`✅ ${domain}.json is aangemaakt`);
 
-      // console.log(`📌 Migreren van ${filteredRecords.length} DNS-records naar Openprovider voor ${domain}...`);
+      console.log(`📌 Migreren van ${filteredRecords.length} DNS-records naar Openprovider voor ${domain}...`);
       await createOpenproviderZone(domain, filteredRecords);
    }
 }
