@@ -3,6 +3,8 @@
 Migrating DNS records can be a tedious task, especially when you have a large number of domains. This script automates the process of preparing the DNS zone data at OpenProvider by extracting the records from Neostrada.
 This way, you only have to double-check the DNS zone before manually transferring the domains to OpenProvider.
 
+Make sure you actively cancel the domains at Neostrada after the migration is completed to avoid double billing. Neostrastra currently does not automatically cancel the domains after transferring them to another provider.
+
 > [!CAUTION]
 > This script is provided as-is and should be used with caution. Make sure to be mindful of the API access and the data you are working with. Always double-check the DNS zone data before transferring the domains to OpenProvider. It is your responsibility to ensure the data is correct and the migration is successful. I am not responsible for any data loss or incorrect DNS zones.
 
