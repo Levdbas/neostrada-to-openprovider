@@ -17,7 +17,7 @@ This way, you only have to double-check the DNS zone before manually transferrin
 - API access to Neostrada (Bearer token obtained via your Neostrada account).
    - Add the token as the `NEOSTRADA_API_KEY` in the `.env` file.
 - API access to OpenProvider
-   - Create a beared token by running `curl -X POST https://api.openprovider.eu/v1beta/auth/login  -d '{"username": "YOUR-EMAIL", "password": "YOUR-PASSWORD", "ip": "x.x.x.x"}')`. where the `ip` is your current IP address.
+   - Create a beared token by running `curl -X POST https://api.openprovider.eu/v1beta/auth/login  -d '{"username": "YOUR-EMAIL", "password": "YOUR-PASSWORD", "ip": "x.x.x.x"}'`. where the `ip` is your current IP address.
    - Add the token as the `OPENPROVIDER_API_KEY` in the `.env` file.
    - Make sure your account has access to the OpenProvider API. This can be activated via the [OpenProvider dashboard](https://cp.openprovider.eu/account/dashboard.php), clicking on your name -> API -> click edit, scroll down and enable the API.
 
